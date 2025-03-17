@@ -6,6 +6,7 @@ import Toast from "react-native-toast-message";
 import { Ionicons } from "@expo/vector-icons";
 import HomeScreen from "./screens/HomeScreen";
 import ServicesScreen from "./screens/ServicesScreen";
+import BookScreen from "./screens/BookScreen";
 import AppointmentsScreen from "./screens/AppointmentsScreen";
 import ProfileScreen from "./screens/ProfileScreen";
 import Header from "../components/Header";
@@ -17,7 +18,7 @@ function TabNavigator() {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
-        headerShown: false, // Hide default header
+        headerShown: false,
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
 
@@ -29,7 +30,7 @@ function TabNavigator() {
               iconName = focused ? "water" : "water-outline";
               break;
               case "Book":
-              iconName = focused ? "water" : "water-outline";
+              iconName = focused ? "add" : "add-outline";
               break;
             case "Appointments":
               iconName = focused ? "calendar" : "calendar-outline";

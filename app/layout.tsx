@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { View, Animated, StyleSheet } from "react-native";
+import { View, Animated, StyleSheet, TouchableWithoutFeedback } from "react-native";
 import Header from "../components/Header"; 
 import Sidebar from "../components/Sidebar";
 
@@ -8,13 +8,12 @@ export default function AppLayout() {
   const translateX = useRef(new Animated.Value(-280)).current;
 
   const toggleSidebar = () => {
+    setSidebarVisible((prev) => !prev);
     Animated.spring(translateX, {
       toValue: isSidebarVisible ? -280 : 0,
       useNativeDriver: true,
-      friction: 8,
+      friction: 5, 
     }).start();
-
-    setSidebarVisible(!isSidebarVisible);
   };
 
   return (
@@ -23,6 +22,12 @@ export default function AppLayout() {
       <Header onMenuPress={toggleSidebar} />
 
       {/* Sidebar for navigation */}
+      {isSidebarVisible && ( 
+        <TouchableWithoutFeedback onPress={toggleSidebar}>
+          <View style={styles.overlay} />
+        </TouchableWithoutFeedback>
+      )}
+      
       <Animated.View style={[styles.sidebarContainer, { transform: [{ translateX }] }]}>
         <Sidebar onClose={toggleSidebar} />
       </Animated.View>
@@ -46,5 +51,13 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 5,
+  },
+  overlay: { 
+    position: "absolute", 
+    top: 0, 
+    left: 0, 
+    right: 0, 
+    bottom: 0, 
+    backgroundColor: "rgba(0,0,0,0.3)"
   },
 });

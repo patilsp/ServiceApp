@@ -1,49 +1,35 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Animated } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import React, { useState, useRef } from "react";
+import { View, Animated, StyleSheet, TouchableWithoutFeedback } from "react-native";
+import Header from "../components/Header"; 
+import Sidebar from "../components/Sidebar";
 
-interface SidebarProps {
-  isVisible: boolean;
-  onClose: () => void;
-  translateX: Animated.Value;
-}
+export default function AppLayout() {
+  const [isSidebarVisible, setSidebarVisible] = useState(false);
+  const translateX = useRef(new Animated.Value(-280)).current;
 
-export default function Sidebar({ isVisible, onClose, translateX }: SidebarProps) {
-  if (!isVisible) return null;
-
-  const menuItems = [
-    { icon: 'home-outline', title: 'Home' },
-    { icon: 'water-outline', title: 'Services' },
-    { icon: 'calendar-outline', title: 'Appointments' },
-    { icon: 'construct-outline', title: 'Maintenance' },
-    { icon: 'call-outline', title: 'Contact Us' },
-    { icon: 'information-circle-outline', title: 'About' },
-  ];
+  const toggleSidebar = () => {
+    setSidebarVisible((prev) => !prev); 
+    Animated.spring(translateX, {
+      toValue: isSidebarVisible ? -280 : 0,
+      useNativeDriver: true,
+      friction: 5, 
+    }).start();
+  };
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.overlay} onPress={onClose} />
-      <Animated.View 
-        style={[
-          styles.sidebar,
-          {
-            transform: [{ translateX }]
-          }
-        ]}
-      >
-        <View style={styles.header}>
-          <Text style={styles.headerTitle}>Menu</Text>
-          <TouchableOpacity onPress={onClose}>
-            <Ionicons name="close-outline" size={24} color="#333" />
-          </TouchableOpacity>
-        </View>
+      {/* Header with menu button */}
+      <Header onMenuPress={toggleSidebar} />
 
-        {menuItems.map((item, index) => (
-          <TouchableOpacity key={index} style={styles.menuItem}>
-            <Ionicons name={item.icon as any} size={24} color="#0088CC" />
-            <Text style={styles.menuText}>{item.title}</Text>
-          </TouchableOpacity>
-        ))}
+      {/* Sidebar for navigation */}
+      {isSidebarVisible && ( // ✅ Detect outside touches
+        <TouchableWithoutFeedback onPress={toggleSidebar}>
+          <View style={styles.overlay} />
+        </TouchableWithoutFeedback>
+      )}
+      
+      <Animated.View style={[styles.sidebarContainer, { transform: [{ translateX }] }]}>
+        <Sidebar onClose={toggleSidebar} />
       </Animated.View>
     </View>
   );
@@ -51,51 +37,27 @@ export default function Sidebar({ isVisible, onClose, translateX }: SidebarProps
 
 const styles = StyleSheet.create({
   container: {
-    ...StyleSheet.absoluteFillObject,
-    zIndex: 1000,
+    flex: 1,
   },
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-  },
-  sidebar: {
-    position: 'absolute',
-    left: 0,
+  sidebarContainer: {
+    position: "absolute",
     top: 0,
-    bottom: 0,
+    left: 0,
     width: 280,
-    backgroundColor: '#FFF',
-    padding: 20,
+    height: "100%",
+    backgroundColor: "white",
+    shadowColor: "#000",
+    shadowOffset: { width: 2, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
     elevation: 5,
-    shadowColor: '#000',
-    shadowOffset: { width: 2, height: 0 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
   },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 20,
-    paddingBottom: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: '#EEE',
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
-  },
-  menuItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 16,
-    borderRadius: 8,
-    marginBottom: 8,
-  },
-  menuText: {
-    marginLeft: 16,
-    fontSize: 16,
-    color: '#333',
+  overlay: { 
+    position: "absolute", 
+    top: 0, 
+    left: 0, 
+    right: 0, 
+    bottom: 0, 
+    backgroundColor: "rgba(0,0,0,0.3)" 
   },
 });
