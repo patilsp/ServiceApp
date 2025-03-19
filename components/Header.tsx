@@ -87,7 +87,7 @@ export default function Header({ onMenuPress }) {
         ) : user ? (
           <TouchableOpacity onPress={toggleDropdown} style={styles.userButton}>
             <Image 
-              source={{ uri: user.profile_pic || "https://via.placeholder.com/150" }}
+              source={{ uri: user.profile_pic || "https://api.a0.dev/assets/image?text=professional%20business%20person%20portrait&aspect=1:1" }}
               style={styles.userAvatar}
             />
             <View style={styles.userStatus} />

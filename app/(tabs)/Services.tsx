@@ -1,57 +1,91 @@
-import React from 'react';
-import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import React, { useEffect, useState } from "react";
+import { View, Text, StyleSheet, FlatList, ActivityIndicator } from "react-native";
+import axios from "axios";
+import { Ionicons } from "@expo/vector-icons";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
-export default function ServicesScreen() {
-  const services = [
-    {
-      id: '1',
-      title: 'RO Water Purifier',
-      price: '$299',
-      description: 'Advanced RO purification system with 7 stages of filtration',
-      image: 'https://api.a0.dev/assets/image?text=modern%20RO%20water%20purifier%20system&aspect=4:3',
-    },
-    {
-      id: '2',
-      title: 'UV Water Purifier',
-      price: '$199',
-      description: 'UV technology for complete bacterial purification',
-      image: 'https://api.a0.dev/assets/image?text=UV%20water%20purification%20system%20modern&aspect=4:3',
-    },
-    {
-      id: '3',
-      title: 'Water Softener',
-      price: '$399',
-      description: 'Advanced water softening system for hard water treatment',
-      image: 'https://api.a0.dev/assets/image?text=modern%20water%20softener%20system&aspect=4:3',
-    },
-  ];
+export default function ServiceHistory() {
+  const [services, setServices] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchServiceHistory();
+  }, []);
+
+  const fetchServiceHistory = async () => {
+    try {
+      const token = localStorage.getItem("token")
+      const response = await axios.get("http://127.0.0.1:8000/api/services/history", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setServices(response.data);
+    } catch (error) {
+      console.error("Error fetching services:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "completed":
+        return "#4CAF50"; // Green
+      case "pending":
+        return "#FFC107"; // Yellow
+      default:
+        return "#2196F3"; // Blue
+    }
+  };
 
   const renderItem = ({ item }) => (
-    <TouchableOpacity style={styles.serviceCard}>
-      <Image source={{ uri: item.image }} style={styles.serviceImage} />
-      <View style={styles.serviceContent}>
-        <View style={styles.serviceHeader}>
-          <Text style={styles.serviceTitle}>{item.title}</Text>
-          <Text style={styles.servicePrice}>{item.price}</Text>
+    <View style={styles.card}>
+      <View style={styles.cardHeader}>
+        <Text style={styles.serviceTitle}>{item.product}</Text>
+        <View style={[styles.statusBadge, { backgroundColor: getStatusColor(item.status) }]}>
+          <Text style={styles.statusText}>{item.status}</Text>
         </View>
-        <Text style={styles.serviceDescription}>{item.description}</Text>
-        <TouchableOpacity style={styles.bookButton}>
-          <Ionicons name="calendar-outline" size={20} color="white" />
-          <Text style={styles.bookButtonText}>Book Service</Text>
-        </TouchableOpacity>
       </View>
-    </TouchableOpacity>
+
+      <View style={styles.detailsRow}>
+        <Ionicons name="construct-outline" size={18} color="#666" />
+        <Text style={styles.detailText}>{item.service_type}</Text>
+      </View>
+
+      <View style={styles.detailsRow}>
+        <Ionicons name="calendar-outline" size={18} color="#666" />
+        <Text style={styles.detailText}>{new Date(item.created_at).toLocaleDateString()}</Text>
+      </View>
+
+      <View style={styles.detailsRow}>
+        <Ionicons name="time-outline" size={18} color="#666" />
+        <Text style={styles.detailText}>{new Date(item.created_at).toLocaleTimeString()}</Text>
+      </View>
+
+      <TouchableOpacity style={styles.detailsButton}>
+        <Text style={styles.buttonText}>View Details</Text>
+      </TouchableOpacity>
+    </View>
   );
 
   return (
     <View style={styles.container}>
-      <FlatList
-        data={services}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.listContainer}
-      />
+      <Text style={styles.heading}>My Service Requests</Text>
+
+      {loading ? (
+        <ActivityIndicator size="large" color="#0088CC" />
+      ) : services.length === 0 ? (
+        <View style={styles.noDataContainer}>
+          <Ionicons name="alert-circle-outline" size={40} color="#ccc" />
+          <Text style={styles.noDataText}>No requests found</Text>
+        </View>
+      ) : (
+        <FlatList
+          data={services}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id.toString()}
+          contentContainerStyle={styles.listContainer}
+        />
+      )}
     </View>
   );
 }
@@ -59,59 +93,79 @@ export default function ServicesScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
-  },
-  listContainer: {
+    backgroundColor: "#f5f5f5",
     padding: 16,
   },
-  serviceCard: {
-    backgroundColor: 'white',
-    borderRadius: 12,
+  heading: {
+    fontSize: 22,
+    fontWeight: "bold",
     marginBottom: 16,
-    overflow: 'hidden',
-    shadowColor: '#000',
+    textAlign: "center",
+  },
+  listContainer: {
+    paddingBottom: 20,
+  },
+  card: {
+    backgroundColor: "white",
+    padding: 16,
+    borderRadius: 10,
+    marginBottom: 12,
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
   },
-  serviceImage: {
-    width: '100%',
-    height: 200,
-  },
-  serviceContent: {
-    padding: 16,
-  },
-  serviceHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 8,
+  cardHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 10,
   },
   serviceTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
-  servicePrice: {
-    fontSize: 18,
-    color: '#0088CC',
-    fontWeight: 'bold',
+  statusBadge: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 5,
   },
-  serviceDescription: {
-    color: '#666',
-    marginBottom: 16,
+  statusText: {
+    color: "white",
+    fontSize: 12,
+    fontWeight: "bold",
+    textTransform: "capitalize",
   },
-  bookButton: {
-    backgroundColor: '#0088CC',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 12,
-    borderRadius: 8,
+  detailsRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: 5,
   },
-  bookButtonText: {
-    color: 'white',
+  detailText: {
     marginLeft: 8,
-    fontWeight: 'bold',
+    color: "#666",
+    fontSize: 14,
+  },
+  detailsButton: {
+    marginTop: 10,
+    backgroundColor: "#0088CC",
+    paddingVertical: 10,
+    borderRadius: 5,
+    alignItems: "center",
+  },
+  buttonText: {
+    color: "white",
+    fontWeight: "bold",
+  },
+  noDataContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    flex: 1,
+  },
+  noDataText: {
+    fontSize: 16,
+    color: "#888",
+    marginTop: 10,
   },
 });
