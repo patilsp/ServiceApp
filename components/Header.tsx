@@ -65,7 +65,7 @@ export default function Header({ onMenuPress }) {
     await AsyncStorage.removeItem("token");
     setUser(null);
     setDropdownVisible(false);
-    router.push("/auth/LoginScreen");
+    router.push("/Login");
   };
 
   return (
@@ -93,7 +93,7 @@ export default function Header({ onMenuPress }) {
             <View style={styles.userStatus} />
           </TouchableOpacity>
         ) : (
-          <TouchableOpacity onPress={() => router.push("/auth/LoginScreen")} style={styles.loginButton}>
+          <TouchableOpacity onPress={() => router.push("/Login")} style={styles.loginButton}>
             <Text style={styles.loginText}>Login</Text>
           </TouchableOpacity>
         )}
@@ -123,7 +123,7 @@ export default function Header({ onMenuPress }) {
           {/* User Info */}
           <View style={styles.dropdownHeader}>
             <Image 
-              source={{ uri: user.profile_pic || "https://via.placeholder.com/150" }}
+              source={{ uri: user.profile_pic || "https://api.a0.dev/assets/image?text=professional%20business%20person%20portrait&aspect=1:1" }}
               style={styles.dropdownAvatar}
             />
             <View style={styles.dropdownUserInfo}>
@@ -201,6 +201,9 @@ const styles = StyleSheet.create({
     position: "relative",
     padding: 4,
   },
+  dropdownUserInfo: {
+    padding: 5,
+  },
   userAvatar: {
     width: 32,
     height: 32,
@@ -269,11 +272,11 @@ const styles = StyleSheet.create({
   dropdownItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 12,
+    padding: 5,
     paddingHorizontal: 16,
+    gap: "10px"
   },
   logoutText: {
     color: "#FF3B30",
   },
 });
-
