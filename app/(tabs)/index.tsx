@@ -1,300 +1,174 @@
-import { Image, StyleSheet, Platform, ScrollView, TouchableOpacity } from "react-native"
-import { Droplet, Calendar, Bell, Settings, BarChart2, Clock } from "lucide-react-native"
+// app/(tabs)/index.tsx
+import React from "react";
+import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import * as Animatable from "react-native-animatable";
+import { useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons"; // For icons
 
-import { ThemedText } from "@/components/ThemedText"
-import { ThemedView } from "@/components/ThemedView"
+export default function DashboardScreen() {
+  const router = useRouter();
 
-export default function HomeScreen() {
+  const handleBookService = () => {
+    router.push("/(tabs)/BookService");
+  };
+
+  const handleViewRequests = () => {
+    router.push("/(tabs)/Services"); // Assuming Services shows requests
+  };
+
   return (
-    <ScrollView
-      style={styles.container}
-      contentContainerStyle={styles.contentContainer}
-      showsVerticalScrollIndicator={false}
-    >
-     
+    <LinearGradient colors={["#87cefa", "#f0f8ff"]} style={styles.container}>
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        {/* Header Section */}
+        <Animatable.View animation="fadeInDown" duration={1000} style={styles.header}>
+          <Text style={styles.headerTitle}>Welcome, Customer!</Text>
+          <Text style={styles.headerSubtitle}>Manage your water purifier services</Text>
+        </Animatable.View>
 
-      {/* Water Quality Card */}
-      <ThemedView style={styles.card}>
-        <ThemedView style={styles.cardHeader}>
-          <Droplet size={24} color="#2196F3" />
-          <ThemedText type="subtitle">Water Quality</ThemedText>
-        </ThemedView>
-        <ThemedView style={styles.waterQualityContainer}>
-          <ThemedView style={styles.qualityItem}>
-            <ThemedView style={[styles.qualityIndicator, { backgroundColor: "#4CAF50" }]} />
-            <ThemedText>TDS: 120 ppm</ThemedText>
-          </ThemedView>
-          <ThemedView style={styles.qualityItem}>
-            <ThemedView style={[styles.qualityIndicator, { backgroundColor: "#4CAF50" }]} />
-            <ThemedText>pH: 7.2</ThemedText>
-          </ThemedView>
-          <ThemedView style={styles.qualityItem}>
-            <ThemedView style={[styles.qualityIndicator, { backgroundColor: "#4CAF50" }]} />
-            <ThemedText>Chlorine: 0.5 mg/L</ThemedText>
-          </ThemedView>
-        </ThemedView>
-        <ThemedText style={styles.statusText}>All parameters normal</ThemedText>
-      </ThemedView>
+        {/* Quick Actions */}
+        <Animatable.View animation="fadeInUp" delay={200} style={styles.card}>
+          <Text style={styles.cardTitle}>Quick Actions</Text>
+          <View style={styles.actionRow}>
+            <TouchableOpacity style={styles.actionButton} onPress={handleBookService}>
+              <LinearGradient colors={["#1e90ff", "#00bfff"]} style={styles.buttonGradient}>
+                <Ionicons name="calendar-outline" size={24} color="#fff" />
+                <Text style={styles.actionText}>Book Service</Text>
+              </LinearGradient>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.actionButton} onPress={handleViewRequests}>
+              <LinearGradient colors={["#1e90ff", "#00bfff"]} style={styles.buttonGradient}>
+                <Ionicons name="list-outline" size={24} color="#fff" />
+                <Text style={styles.actionText}>View Requests</Text>
+              </LinearGradient>
+            </TouchableOpacity>
+          </View>
+        </Animatable.View>
 
-      {/* Filter Status Card */}
-      <ThemedView style={styles.card}>
-        <ThemedView style={styles.cardHeader}>
-          <BarChart2 size={24} color="#673AB7" />
-          <ThemedText type="subtitle">Filter Status</ThemedText>
-        </ThemedView>
-        <ThemedView style={styles.filterStatusContainer}>
-          <ThemedView style={styles.filterItem}>
-            <ThemedView style={styles.filterProgress}>
-              <ThemedView style={[styles.filterProgressFill, { width: "75%", backgroundColor: "#4CAF50" }]} />
-            </ThemedView>
-            <ThemedText>Sediment Filter: 75%</ThemedText>
-          </ThemedView>
-          <ThemedView style={styles.filterItem}>
-            <ThemedView style={styles.filterProgress}>
-              <ThemedView style={[styles.filterProgressFill, { width: "45%", backgroundColor: "#FF9800" }]} />
-            </ThemedView>
-            <ThemedText>Carbon Filter: 45%</ThemedText>
-          </ThemedView>
-          <ThemedView style={styles.filterItem}>
-            <ThemedView style={styles.filterProgress}>
-              <ThemedView style={[styles.filterProgressFill, { width: "90%", backgroundColor: "#4CAF50" }]} />
-            </ThemedView>
-            <ThemedText>RO Membrane: 90%</ThemedText>
-          </ThemedView>
-        </ThemedView>
-      </ThemedView>
+        {/* Service Status */}
+        <Animatable.View animation="fadeInUp" delay={400} style={styles.card}>
+          <Text style={styles.cardTitle}>Service Status</Text>
+          <View style={styles.statusItem}>
+            <Text style={styles.statusText}>Last Service: 2025-03-15</Text>
+            <Text style={styles.statusSubText}>Filter Change - Completed</Text>
+          </View>
+          <View style={styles.statusItem}>
+            <Text style={styles.statusText}>Next Due: 2025-09-15</Text>
+            <Text style={styles.statusSubText}>Maintenance - Scheduled</Text>
+          </View>
+        </Animatable.View>
 
-      {/* Quick Actions */}
-      <ThemedText type="subtitle" style={styles.sectionTitle}>
-        Quick Actions
-      </ThemedText>
-      <ThemedView style={styles.quickActionsContainer}>
-        <TouchableOpacity>
-          <ThemedView style={styles.actionCard}>
-            <Calendar size={28} color="#2196F3" />
-            <ThemedText style={styles.actionText}>Schedule Service</ThemedText>
-          </ThemedView>
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <ThemedView style={styles.actionCard}>
-            <Bell size={28} color="#FF9800" />
-            <ThemedText style={styles.actionText}>Notifications</ThemedText>
-          </ThemedView>
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <ThemedView style={styles.actionCard}>
-            <Settings size={28} color="#673AB7" />
-            <ThemedText style={styles.actionText}>Settings</ThemedText>
-          </ThemedView>
-        </TouchableOpacity>
-      </ThemedView>
-
-      {/* Upcoming Maintenance */}
-      <ThemedText type="subtitle" style={styles.sectionTitle}>
-        Upcoming Maintenance
-      </ThemedText>
-      <ThemedView style={styles.card}>
-        <ThemedView style={styles.maintenanceItem}>
-          <Clock size={20} color="#FF9800" />
-          <ThemedView style={styles.maintenanceInfo}>
-            <ThemedText type="defaultSemiBold">Filter Replacement</ThemedText>
-            <ThemedText>Carbon Filter needs replacement</ThemedText>
-          </ThemedView>
-          <ThemedText style={styles.maintenanceDate}>May 15</ThemedText>
-        </ThemedView>
-        <ThemedView style={styles.separator} />
-        <ThemedView style={styles.maintenanceItem}>
-          <Clock size={20} color="#2196F3" />
-          <ThemedView style={styles.maintenanceInfo}>
-            <ThemedText type="defaultSemiBold">Regular Maintenance</ThemedText>
-            <ThemedText>Scheduled system check</ThemedText>
-          </ThemedView>
-          <ThemedText style={styles.maintenanceDate}>Jun 10</ThemedText>
-        </ThemedView>
-      </ThemedView>
-
-      {/* Usage Statistics */}
-      <ThemedText type="subtitle" style={styles.sectionTitle}>
-        Water Usage
-      </ThemedText>
-      <ThemedView style={styles.card}>
-        <ThemedView style={styles.usageContainer}>
-          <ThemedView style={styles.usageItem}>
-            <ThemedText type="defaultSemiBold" style={styles.usageValue}>
-              120L
-            </ThemedText>
-            <ThemedText>Today</ThemedText>
-          </ThemedView>
-          <ThemedView style={styles.usageItem}>
-            <ThemedText type="defaultSemiBold" style={styles.usageValue}>
-              845L
-            </ThemedText>
-            <ThemedText>This Week</ThemedText>
-          </ThemedView>
-          <ThemedView style={styles.usageItem}>
-            <ThemedText type="defaultSemiBold" style={styles.usageValue}>
-              3,240L
-            </ThemedText>
-            <ThemedText>This Month</ThemedText>
-          </ThemedView>
-        </ThemedView>
-      </ThemedView>
-    </ScrollView>
-  )
+        {/* Account Info */}
+        <Animatable.View animation="fadeInUp" delay={600} style={styles.card}>
+          <Text style={styles.cardTitle}>Your Account</Text>
+          <Text style={styles.infoText}>Email: customer@example.com</Text>
+          <Text style={styles.infoText}>Plan: Premium Care</Text>
+          <TouchableOpacity style={styles.secondaryButton}>
+            <Text style={styles.secondaryButtonText}>Edit Profile</Text>
+          </TouchableOpacity>
+        </Animatable.View>
+      </ScrollView>
+    </LinearGradient>
+  );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  contentContainer: {
-    padding: 16,
-    paddingBottom: 32,
+  scrollContent: {
+    padding: 20,
+    paddingTop: 40,
+    paddingBottom: 20,
   },
   header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    marginBottom: 30,
     alignItems: "center",
-    marginBottom: 24,
   },
-  avatar: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: "#E0E0E0",
+  headerTitle: {
+    fontSize: 28,
+    fontWeight: "bold",
+    color: "#1e90ff",
+    fontFamily: "Roboto-Bold",
+  },
+  headerSubtitle: {
+    fontSize: 16,
+    color: "#333",
+    fontFamily: "Roboto-Bold",
+    marginTop: 5,
   },
   card: {
+    backgroundColor: "rgba(255, 255, 255, 0.9)",
     borderRadius: 16,
-    padding: 16,
-    marginBottom: 16,
-    borderWidth: 1,
-    borderColor: Platform.select({
-      ios: "rgba(0,0,0,0.1)",
-      android: "rgba(0,0,0,0.1)",
-      default: "rgba(0,0,0,0.1)",
-    }),
-    ...Platform.select({
-      ios: {
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-      },
-      android: {
-        elevation: 3,
-      },
-      default: {
-        boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-      },
-    }),
+    padding: 20,
+    marginBottom: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    elevation: 5,
   },
-  cardHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 16,
-    gap: 8,
+  cardTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#333",
+    fontFamily: "Roboto-Bold",
+    marginBottom: 15,
   },
-  waterQualityContainer: {
-    gap: 12,
-    marginBottom: 12,
-  },
-  qualityItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
-  qualityIndicator: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-  },
-  statusText: {
-    color: "#4CAF50",
-    fontWeight: "500",
-  },
-  filterStatusContainer: {
-    gap: 16,
-  },
-  filterItem: {
-    gap: 8,
-  },
-  filterProgress: {
-    height: 8,
-    backgroundColor: "#E0E0E0",
-    borderRadius: 4,
-    overflow: "hidden",
-  },
-  filterProgressFill: {
-    height: "100%",
-    borderRadius: 4,
-  },
-  sectionTitle: {
-    marginTop: 8,
-    marginBottom: 12,
-  },
-  quickActionsContainer: {
+  actionRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 24,
   },
-  actionCard: {
+  actionButton: {
+    flex: 1,
+    marginHorizontal: 5,
+    borderRadius: 12,
+  },
+  buttonGradient: {
+    paddingVertical: 15,
+    borderRadius: 12,
     alignItems: "center",
+    flexDirection: "row",
     justifyContent: "center",
-    padding: 16,
-    borderRadius: 16,
-    width: 100,
-    height: 100,
-    borderWidth: 1,
-    borderColor: Platform.select({
-      ios: "rgba(0,0,0,0.1)",
-      android: "rgba(0,0,0,0.1)",
-      default: "rgba(0,0,0,0.1)",
-    }),
-    ...Platform.select({
-      ios: {
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-      },
-      android: {
-        elevation: 2,
-      },
-      default: {
-        boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-      },
-    }),
   },
   actionText: {
-    marginTop: 8,
-    textAlign: "center",
+    fontSize: 16,
+    color: "#fff",
+    fontFamily: "Roboto-Bold",
+    fontWeight: "bold",
+    marginLeft: 10,
   },
-  maintenanceItem: {
-    flexDirection: "row",
+  statusItem: {
+    marginBottom: 15,
+  },
+  statusText: {
+    fontSize: 16,
+    color: "#333",
+    fontFamily: "Roboto-Bold",
+  },
+  statusSubText: {
+    fontSize: 14,
+    color: "#666",
+    fontFamily: "Roboto-Bold",
+  },
+  infoText: {
+    fontSize: 16,
+    color: "#333",
+    fontFamily: "Roboto-Bold",
+    marginBottom: 10,
+  },
+  secondaryButton: {
+    borderWidth: 1,
+    borderColor: "#1e90ff",
+    borderRadius: 8,
+    paddingVertical: 10,
     alignItems: "center",
-    gap: 12,
+    marginTop: 10,
   },
-  maintenanceInfo: {
-    flex: 1,
+  secondaryButtonText: {
+    fontSize: 16,
+    color: "#1e90ff",
+    fontFamily: "Roboto-Bold",
+    fontWeight: "bold",
   },
-  maintenanceDate: {
-    color: "#757575",
-  },
-  separator: {
-    height: 1,
-    backgroundColor: "#E0E0E0",
-    marginVertical: 12,
-  },
-  usageContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-  usageItem: {
-    alignItems: "center",
-  },
-  usageValue: {
-    fontSize: 20,
-    marginBottom: 4,
-  },
-})
-
+});
