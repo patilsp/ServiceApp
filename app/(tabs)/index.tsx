@@ -1,71 +1,99 @@
-// app/(tabs)/index.tsx
-import React from "react";
-import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
-import * as Animatable from "react-native-animatable";
-import { useRouter } from "expo-router";
-import { Ionicons } from "@expo/vector-icons"; // For icons
+import React from 'react';
+import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Image } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import * as Animatable from 'react-native-animatable';
+import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function DashboardScreen() {
   const router = useRouter();
 
-  const handleBookService = () => {
-    router.push("/(tabs)/BookService");
-  };
+  const categories = [
+    { icon: 'build-outline', label: 'Repair', onPress: () => router.push('/(tabs)/BookService') },
+    { icon: 'water-outline', label: 'Plumber', onPress: () => console.log('Plumber') },
+    { icon: 'flash-outline', label: 'Electrician', onPress: () => console.log('Electrician') },
+    { icon: 'brush-outline', label: 'Cleaning', onPress: () => console.log('Cleaning') },
+    { icon: 'color-palette-outline', label: 'Painting', onPress: () => console.log('Painting') },
+    { icon: 'restaurant-outline', label: 'Cooking', onPress: () => console.log('Cooking') },
+  ];
 
-  const handleViewRequests = () => {
-    router.push("/(tabs)/Services"); // Assuming Services shows requests
-  };
+  const popularServices = [
+    { title: 'Air conditioner Repair', rating: 4.8, provider: 'Jane Cooper', image: 'https://api.a0.dev/assets/image?text=air%20conditioner%20repair&aspect=1:1' },
+    { title: 'Plumbing Service', rating: 4.5, provider: 'John Smith', image: 'https://api.a0.dev/assets/image?text=plumbing%20service&aspect=1:1' },
+    { title: 'Electrical Wiring', rating: 4.7, provider: 'Emily Davis', image: 'https://api.a0.dev/assets/image?text=electrical%20wiring&aspect=1:1' },
+  ];
 
   return (
-    <LinearGradient colors={["#87cefa", "#f0f8ff"]} style={styles.container}>
+    <LinearGradient colors={['#87cefa', '#f0f8ff']} style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        {/* Header Section */}
-        <Animatable.View animation="fadeInDown" duration={1000} style={styles.header}>
-          <Text style={styles.headerTitle}>Welcome, Customer!</Text>
-          <Text style={styles.headerSubtitle}>Manage your water purifier services</Text>
+        {/* Promotional Banner */}
+        <Animatable.View animation="fadeInDown" duration={1000}>
+          <LinearGradient
+            colors={['#1e90ff', '#00bfff']}
+            style={styles.banner}
+          >
+            <View style={styles.bannerTextContainer}>
+              <View style={styles.discountContainer}>
+                <Text style={styles.discountText}>20%</Text>
+                <Ionicons name="flame-outline" size={20} color="#FF3B30" style={styles.flameIcon} />
+              </View>
+              <Text style={styles.bannerTitle}>Today’s Special!</Text>
+              <Text style={styles.bannerSubtitle}>Get Discount on Every Service Only for Today</Text>
+            </View>
+            <Image
+              source={{ uri: 'https://api.a0.dev/assets/image?text=worker%20giving%20thumbs%20up&aspect=1:1' }}
+              style={styles.bannerImage}
+            />
+          </LinearGradient>
         </Animatable.View>
 
-        {/* Quick Actions */}
-        <Animatable.View animation="fadeInUp" delay={200} style={styles.card}>
-          <Text style={styles.cardTitle}>Quick Actions</Text>
-          <View style={styles.actionRow}>
-            <TouchableOpacity style={styles.actionButton} onPress={handleBookService}>
-              <LinearGradient colors={["#1e90ff", "#00bfff"]} style={styles.buttonGradient}>
-                <Ionicons name="calendar-outline" size={24} color="#fff" />
-                <Text style={styles.actionText}>Book Service</Text>
-              </LinearGradient>
+        {/* Categories Section */}
+        <Animatable.View animation="fadeInUp" delay={200}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Categories</Text>
+            <TouchableOpacity onPress={() => console.log('See All Categories')}>
+              <Text style={styles.seeAll}>See All</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.actionButton} onPress={handleViewRequests}>
-              <LinearGradient colors={["#1e90ff", "#00bfff"]} style={styles.buttonGradient}>
-                <Ionicons name="list-outline" size={24} color="#fff" />
-                <Text style={styles.actionText}>View Requests</Text>
-              </LinearGradient>
+          </View>
+          <View style={styles.categoriesContainer}>
+            {categories.map((category, index) => (
+              <TouchableOpacity
+                key={index}
+                style={styles.categoryCard}
+                onPress={category.onPress}
+              >
+                <Ionicons name={category.icon as any} size={30} color="#fff" style={styles.categoryIcon} />
+                <Text style={styles.categoryLabel}>{category.label}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </Animatable.View>
+
+        {/* Popular Services Section */}
+        <Animatable.View animation="fadeInUp" delay={400}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Popular Services</Text>
+            <TouchableOpacity onPress={() => console.log('See All Services')}>
+              <Text style={styles.seeAll}>See All</Text>
             </TouchableOpacity>
           </View>
-        </Animatable.View>
-
-        {/* Service Status */}
-        <Animatable.View animation="fadeInUp" delay={400} style={styles.card}>
-          <Text style={styles.cardTitle}>Service Status</Text>
-          <View style={styles.statusItem}>
-            <Text style={styles.statusText}>Last Service: 2025-03-15</Text>
-            <Text style={styles.statusSubText}>Filter Change - Completed</Text>
-          </View>
-          <View style={styles.statusItem}>
-            <Text style={styles.statusText}>Next Due: 2025-09-15</Text>
-            <Text style={styles.statusSubText}>Maintenance - Scheduled</Text>
-          </View>
-        </Animatable.View>
-
-        {/* Account Info */}
-        <Animatable.View animation="fadeInUp" delay={600} style={styles.card}>
-          <Text style={styles.cardTitle}>Your Account</Text>
-          <Text style={styles.infoText}>Email: customer@example.com</Text>
-          <Text style={styles.infoText}>Plan: Premium Care</Text>
-          <TouchableOpacity style={styles.secondaryButton}>
-            <Text style={styles.secondaryButtonText}>Edit Profile</Text>
-          </TouchableOpacity>
+          {popularServices.map((service, index) => (
+            <TouchableOpacity
+              key={index}
+              style={styles.serviceCard}
+              onPress={() => router.push('/(tabs)/BookService')}
+            >
+              <Image source={{ uri: service.image }} style={styles.serviceImage} />
+              <View style={styles.serviceInfo}>
+                <Text style={styles.serviceTitle}>{service.title}</Text>
+                <View style={styles.ratingContainer}>
+                  <Ionicons name="star" size={16} color="#FFD700" />
+                  <Text style={styles.ratingText}>{service.rating}</Text>
+                </View>
+                <Text style={styles.providerText}>{service.provider}</Text>
+              </View>
+            </TouchableOpacity>
+          ))}
         </Animatable.View>
       </ScrollView>
     </LinearGradient>
@@ -78,97 +106,142 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     padding: 20,
-    paddingTop: 40,
+    paddingTop: 10,
     paddingBottom: 20,
   },
-  header: {
-    marginBottom: 30,
-    alignItems: "center",
-  },
-  headerTitle: {
-    fontSize: 28,
-    fontWeight: "bold",
-    color: "#1e90ff",
-    fontFamily: "Roboto-Bold",
-  },
-  headerSubtitle: {
-    fontSize: 16,
-    color: "#333",
-    fontFamily: "Roboto-Bold",
-    marginTop: 5,
-  },
-  card: {
-    backgroundColor: "rgba(255, 255, 255, 0.9)",
+  banner: {
+    flexDirection: 'row',
     borderRadius: 16,
-    padding: 20,
     marginBottom: 20,
-    shadowColor: "#000",
+    overflow: 'hidden',
+    elevation: 5,
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 5 },
     shadowOpacity: 0.1,
     shadowRadius: 10,
-    elevation: 5,
   },
-  cardTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#333",
-    fontFamily: "Roboto-Bold",
-    marginBottom: 15,
-  },
-  actionRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-  actionButton: {
+  bannerTextContainer: {
     flex: 1,
-    marginHorizontal: 5,
-    borderRadius: 12,
+    padding: 20,
   },
-  buttonGradient: {
-    paddingVertical: 15,
-    borderRadius: 12,
-    alignItems: "center",
-    flexDirection: "row",
-    justifyContent: "center",
-  },
-  actionText: {
-    fontSize: 16,
-    color: "#fff",
-    fontFamily: "Roboto-Bold",
-    fontWeight: "bold",
-    marginLeft: 10,
-  },
-  statusItem: {
-    marginBottom: 15,
-  },
-  statusText: {
-    fontSize: 16,
-    color: "#333",
-    fontFamily: "Roboto-Bold",
-  },
-  statusSubText: {
-    fontSize: 14,
-    color: "#666",
-    fontFamily: "Roboto-Bold",
-  },
-  infoText: {
-    fontSize: 16,
-    color: "#333",
-    fontFamily: "Roboto-Bold",
+  discountContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
     marginBottom: 10,
   },
-  secondaryButton: {
-    borderWidth: 1,
-    borderColor: "#1e90ff",
-    borderRadius: 8,
-    paddingVertical: 10,
-    alignItems: "center",
-    marginTop: 10,
+  discountText: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#fff',
+    fontFamily: 'Roboto-Bold',
   },
-  secondaryButtonText: {
+  flameIcon: {
+    marginLeft: 5,
+  },
+  bannerTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#fff',
+    fontFamily: 'Roboto-Bold',
+    marginBottom: 5,
+  },
+  bannerSubtitle: {
+    fontSize: 14,
+    color: '#fff',
+    fontFamily: 'Roboto',
+  },
+  bannerImage: {
+    width: 120,
+    height: 120,
+    resizeMode: 'contain',
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 15,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+    fontFamily: 'Roboto-Bold',
+  },
+  seeAll: {
+    fontSize: 14,
+    color: '#1e90ff',
+    fontFamily: 'Roboto',
+  },
+  categoriesContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    marginBottom: 20,
+  },
+  categoryCard: {
+    width: '30%',
+    backgroundColor: '#1e90ff',
+    borderRadius: 12,
+    padding: 15,
+    alignItems: 'center',
+    marginBottom: 15,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+  },
+  categoryIcon: {
+    marginBottom: 10,
+  },
+  categoryLabel: {
+    fontSize: 14,
+    color: '#fff',
+    fontFamily: 'Roboto',
+    textAlign: 'center',
+  },
+  serviceCard: {
+    flexDirection: 'row',
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    borderRadius: 12,
+    padding: 15,
+    marginBottom: 15,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+  },
+  serviceImage: {
+    width: 60,
+    height: 60,
+    borderRadius: 8,
+    marginRight: 15,
+  },
+  serviceInfo: {
+    flex: 1,
+  },
+  serviceTitle: {
     fontSize: 16,
-    color: "#1e90ff",
-    fontFamily: "Roboto-Bold",
-    fontWeight: "bold",
+    fontWeight: 'bold',
+    color: '#333',
+    fontFamily: 'Roboto-Bold',
+    marginBottom: 5,
+  },
+  ratingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 5,
+  },
+  ratingText: {
+    fontSize: 14,
+    color: '#333',
+    fontFamily: 'Roboto',
+    marginLeft: 5,
+  },
+  providerText: {
+    fontSize: 14,
+    color: '#666',
+    fontFamily: 'Roboto',
   },
 });

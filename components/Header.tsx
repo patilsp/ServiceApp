@@ -7,6 +7,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import axios from "axios";
+import { LinearGradient } from "expo-linear-gradient";
+import * as Animatable from "react-native-animatable";
 
 export default function Header({ onMenuPress }) {
   const insets = useSafeAreaInsets();
@@ -44,18 +46,16 @@ export default function Header({ onMenuPress }) {
 
   const toggleDropdown = () => {
     if (dropdownVisible) {
-      // Closing dropdown
       Animated.timing(dropdownAnimation, {
         toValue: 0,
-        duration: 200,
+        duration: 300,
         useNativeDriver: true,
       }).start(() => setDropdownVisible(false));
     } else {
-      // Opening dropdown
       setDropdownVisible(true);
       Animated.timing(dropdownAnimation, {
         toValue: 1,
-        duration: 200,
+        duration: 300,
         useNativeDriver: true,
       }).start();
     }
@@ -69,11 +69,14 @@ export default function Header({ onMenuPress }) {
   };
 
   return (
-    <View style={[styles.header, { paddingTop: insets.top }]}>
-      <View style={styles.headerContent}>
+    <LinearGradient
+      colors={["#1e90ff", "#00bfff"]}
+      style={[styles.header, { paddingTop: insets.top }]}
+    >
+      <Animatable.View animation="fadeInDown" duration={800} style={styles.headerContent}>
         {/* Menu Button */}
         <TouchableOpacity onPress={onMenuPress} style={styles.menuButton}>
-          <Ionicons name="menu-outline" size={24} color="#FFF" />
+          <Ionicons name="menu-outline" size={28} color="#fff" />
         </TouchableOpacity>
         
         {/* Logo */}
@@ -83,23 +86,26 @@ export default function Header({ onMenuPress }) {
         
         {/* User Section */}
         {loading ? (
-          <ActivityIndicator size="small" color="#FFF" />
+          <ActivityIndicator size="small" color="#fff" />
         ) : user ? (
           <TouchableOpacity onPress={toggleDropdown} style={styles.userButton}>
             <Image 
               source={{ uri: user.profile_pic || "https://api.a0.dev/assets/image?text=professional%20business%20person%20portrait&aspect=1:1" }}
               style={styles.userAvatar}
             />
-            <View style={styles.userStatus} />
+            <LinearGradient
+              colors={["#4CAF50", "#2E7D32"]}
+              style={styles.userStatus}
+            />
           </TouchableOpacity>
         ) : (
-          <TouchableOpacity onPress={() => router.push("/Login")} style={styles.loginButton}>
+          <TouchableOpacity onPress={() => router.push("/LoginScreen")} style={styles.loginButton}>
             <Text style={styles.loginText}>Login</Text>
           </TouchableOpacity>
         )}
-      </View>
+      </Animatable.View>
 
-      {/* Background Overlay for closing the dropdown when clicking outside */}
+      {/* Background Overlay for closing the dropdown */}
       {dropdownVisible && (
         <Pressable style={styles.overlay} onPress={toggleDropdown} />
       )}
@@ -113,15 +119,18 @@ export default function Header({ onMenuPress }) {
               transform: [{
                 translateY: dropdownAnimation.interpolate({
                   inputRange: [0, 1],
-                  outputRange: [-10, 0]
-                })
+                  outputRange: [-20, 0],
+                }),
               }],
               opacity: dropdownAnimation,
-            }
+            },
           ]}
         >
           {/* User Info */}
-          <View style={styles.dropdownHeader}>
+          <LinearGradient
+            colors={["#f0f8ff", "#e3f2fd"]}
+            style={styles.dropdownHeader}
+          >
             <Image 
               source={{ uri: user.profile_pic || "https://api.a0.dev/assets/image?text=professional%20business%20person%20portrait&aspect=1:1" }}
               style={styles.dropdownAvatar}
@@ -130,17 +139,17 @@ export default function Header({ onMenuPress }) {
               <Text style={styles.dropdownName}>{user.name}</Text>
               <Text style={styles.dropdownEmail}>{user.email}</Text>
             </View>
-          </View>
+          </LinearGradient>
           
           <View style={styles.dropdownDivider} />
           
           {/* Menu Items */}
-          <TouchableOpacity style={styles.dropdownItem}>
+          <TouchableOpacity style={styles.dropdownItem} onPress={() => router.push("/(tabs)/Profile")}>
             <Ionicons name="person-outline" size={20} color="#333" />
             <Text style={styles.dropdownText}>My Profile</Text>
           </TouchableOpacity>
           
-          <TouchableOpacity style={styles.dropdownItem}>
+          <TouchableOpacity style={styles.dropdownItem} onPress={() => console.log("Settings")}>
             <Ionicons name="settings-outline" size={20} color="#333" />
             <Text style={styles.dropdownText}>Settings</Text>
           </TouchableOpacity>
@@ -154,35 +163,26 @@ export default function Header({ onMenuPress }) {
           </TouchableOpacity>
         </Animated.View>
       )}
-    </View>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
-  // header: {
-  //   backgroundColor: "#0088CC",
-  //   elevation: 4,
-  //   shadowColor: "#000",
-  //   shadowOffset: { width: 0, height: 2 },
-  //   shadowOpacity: 0.2,
-  //   shadowRadius: 4,
-  // },
   header: {
-    backgroundColor: "#0088CC",
-    elevation: 10, 
+    elevation: 10,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
-    shadowRadius: 4,
+    shadowRadius: 6,
     position: "relative",
     zIndex: 1000,
   },
-  
   headerContent: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    padding: 16,
+    paddingHorizontal: 20,
+    paddingVertical: 15,
     position: "relative",
   },
   menuButton: {
@@ -193,43 +193,53 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   title: {
-    color: "#FFF",
-    fontSize: 20,
+    color: "#fff",
+    fontSize: 22,
     fontWeight: "bold",
+    fontFamily: "Roboto-Bold",
   },
   userButton: {
     position: "relative",
     padding: 4,
   },
-  dropdownUserInfo: {
-    padding: 5,
-  },
   userAvatar: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     borderWidth: 2,
-    borderColor: "#FFF",
+    borderColor: "#fff",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
   },
   userStatus: {
     position: "absolute",
     right: 2,
     bottom: 2,
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-    backgroundColor: "#4CAF50",
+    width: 14,
+    height: 14,
+    borderRadius: 7,
     borderWidth: 2,
-    borderColor: "#0088CC",
+    borderColor: "#fff",
   },
   loginButton: {
-    padding: 10,
-    backgroundColor: "#FFF",
-    borderRadius: 8,
+    paddingHorizontal: 15,
+    paddingVertical: 8,
+    backgroundColor: "rgba(255, 255, 255, 0.9)",
+    borderRadius: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
   },
   loginText: {
-    color: "#0088CC",
+    color: "#1e90ff",
+    fontSize: 16,
     fontWeight: "bold",
+    fontFamily: "Roboto-Bold",
   },
   overlay: {
     position: "absolute",
@@ -237,46 +247,72 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: "rgba(0,0,0,0.3)",
+    backgroundColor: "rgba(0, 0, 0, 0.3)",
+    zIndex: 999,
   },
   dropdown: {
     position: "absolute",
-    top: 60, 
-    right: 16,
-    backgroundColor: "#FFF",
-    borderRadius: 12,
-    width: 280,
+    top: 70,
+    right: 20,
+    backgroundColor: "#fff",
+    borderRadius: 16,
+    width: 300,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.2,
-    shadowRadius: 8,
+    shadowRadius: 10,
     elevation: 10,
     zIndex: 1000,
+    overflow: 'hidden',
   },
-
   dropdownHeader: {
     flexDirection: "row",
-    padding: 16,
+    padding: 20,
     alignItems: "center",
   },
   dropdownAvatar: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    marginRight: 15,
+  },
+  dropdownUserInfo: {
+    flex: 1,
+  },
+  dropdownName: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#333",
+    fontFamily: "Roboto-Bold",
+    marginBottom: 5,
+  },
+  dropdownEmail: {
+    fontSize: 14,
+    color: "#666",
+    fontFamily: "Roboto",
   },
   dropdownDivider: {
     height: 1,
-    backgroundColor: "#EEE",
-    marginVertical: 8,
+    backgroundColor: "rgba(0, 0, 0, 0.1)",
+    marginVertical: 10,
   },
   dropdownItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 5,
-    paddingHorizontal: 16,
-    gap: "10px"
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    gap: 12,
+  },
+  dropdownText: {
+    fontSize: 16,
+    color: "#333",
+    fontFamily: "Roboto",
+  },
+  logoutItem: {
+    paddingBottom: 15,
   },
   logoutText: {
     color: "#FF3B30",
+    fontFamily: "Roboto-Bold",
   },
 });

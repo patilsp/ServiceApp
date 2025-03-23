@@ -9,6 +9,7 @@ export default function TabLayout() {
       <Header />
       <Tabs
         screenOptions={{
+          headerShown: false, // Ensure default header is disabled for all tabs
           tabBarActiveTintColor: "#1e90ff",
           tabBarInactiveTintColor: "#666",
           tabBarStyle: {
@@ -39,13 +40,11 @@ export default function TabLayout() {
             tabBarIcon: ({ color, size }) => <Ionicons name="add-circle-outline" size={size} color={color} />,
           }}
         />
-         <Tabs.Screen
+        <Tabs.Screen
           name="Appointments"
           options={{
             title: "Appointments",
-            tabBarIcon: ({ color, size }) => (
-              <Ionicons name="calendar-outline" size={size} color={color} />
-            ),
+            tabBarIcon: ({ color, size }) => <Ionicons name="calendar-outline" size={size} color={color} />,
           }}
         />
         <Tabs.Screen
